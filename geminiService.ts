@@ -107,30 +107,22 @@ export const generateHistoryQuiz = async (): Promise<QuizData> => {
     console.error("Failed to generate or parse Gemini response:", error);
 
     if (error instanceof Error) {
-      const msg = error.message.toLowerCase();
+      // Always show the raw error for debugging
+      const rawMsg = error.message;
+      const msg = rawMsg.toLowerCase();
 
       // Check for common API key errors
-      if (msg.includes('api_key_invalid') || msg.includes('api key not valid') || msg.includes('401') || msg.includes('permission_denied')) {
-        throw new Error("API Key không hợp lệ hoặc đã hết hạn. Vui lòng vào Settings để nhập lại API Key mới từ Google AI Studio.");
+      if (msg.includes('api_key_invalid') || msg.includes('api key not valid') || msg.includes('permission_denied')) {
+        throw new Error(`API Key không hợp lệ. Vui lòng vào Settings để nhập lại.\n\n[Chi tiết: ${rawMsg}]`);
       }
 
-      // Check for quota/rate limit errors  
-      if (msg.includes('quota') || msg.includes('rate') || msg.includes('429') || msg.includes('resource_exhausted')) {
-        throw new Error("API Key đã hết lượt sử dụng miễn phí (quota). Vui lòng chờ vài phút hoặc tạo API Key mới.");
+      // Check for quota/rate limit errors (be specific to avoid false positives)
+      if (msg.includes('resource_exhausted') || msg.includes('rate_limit') || msg.includes('rate limit') || msg.includes('quota_exceeded')) {
+        throw new Error(`API Key đã hết quota. Vui lòng chờ vài phút hoặc tạo API Key mới.\n\n[Chi tiết: ${rawMsg}]`);
       }
 
-      // Check for model not found
-      if (msg.includes('not found') || msg.includes('404')) {
-        throw new Error("Model AI không khả dụng. Vui lòng liên hệ giáo viên để được hỗ trợ.");
-      }
-
-      // Check for network errors
-      if (msg.includes('network') || msg.includes('fetch') || msg.includes('failed to fetch') || msg.includes('cors')) {
-        throw new Error("Lỗi mạng. Vui lòng kiểm tra kết nối internet và thử lại.");
-      }
-
-      // Show the actual error message for debugging
-      throw new Error(`Lỗi AI: ${error.message}`);
+      // For ALL other errors, show the raw message directly so user can debug
+      throw new Error(`Lỗi AI: ${rawMsg}`);
     }
 
     throw new Error("Lỗi không xác định khi tạo đề thi từ AI. Vui lòng thử lại sau.");
