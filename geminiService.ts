@@ -18,13 +18,13 @@ export const generateHistoryQuiz = async (): Promise<QuizData> => {
   const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `
-     Bạn là một giáo viên Lịch sử lớp 11 chuyên nghiệp. Hãy tạo một đề ôn tập về Chủ đề 4: Bảo vệ Tổ quốc (trước 1945).
-    Kiến thức bao gồm: Vị trí địa chiến lược Việt Nam, ý nghĩa, vai trò của các cuộc kháng chiến, khởi nghĩa đối với lịch sử dân tộc, chiến thắng Bạch Đằng (938), Kháng chiến chống Tống lần 1(981), lần 2(1075 - 1077)/Mông-Nguyên (thế kỉ XIII) - nhà Trần/Minh (thế kỉ XV) - nhà Hồ, Khởi nghĩa Lam Sơn (1418 - 1427), kháng chiến chống Xiêm (1785) - Tây Sơn - Nguyễn Huệ, kháng chiến chống Thanh - vua Quang Trung (1789), Bài học kinh nghiệm.
-    Đảm bảo các mức độ tư duy: 40% nhận biết, 30% thông hiểu, 30% vận dụng.
+    Bạn là một giáo viên Lịch sử lớp 11 chuyên nghiệp. Hãy tạo một đề ôn tập về Chủ đề 4: Bảo vệ Tổ quốc (trước 1945).
+    Kiến thức bao gồm: Vị trí địa chiến lược Việt Nam, Bạch Đằng (938), Kháng chiến chống Tống/Mông-Nguyên/Minh, Khởi nghĩa Lam Sơn, Quang Trung (1789), Bài học kinh nghiệm.
+    Đảm bảo các mức độ tư duy: 30% nhận biết, 30% thông hiểu, 40% vận dụng.
     
     Tạo cấu trúc chính xác:
-    - 12 câu trắc nghiệm nhiều lựa chọn (multiple_choice). Mỗi câu có 4 phương án.
-    - 4 câu trắc nghiệm đúng/sai (true_false).
+    - 5 câu trắc nghiệm nhiều lựa chọn (multiple_choice). Mỗi câu có 4 phương án.
+    - 3 câu trắc nghiệm đúng/sai (true_false).
     - 2 câu tự luận vận dụng (essay).
 
     Trả về JSON theo đúng cấu trúc schema đã yêu cầu.
@@ -77,10 +77,10 @@ export const generateHistoryQuiz = async (): Promise<QuizData> => {
   };
 
   try {
-    console.log("Calling Gemini API with @google/genai SDK, model: gemini-1.5-flash");
+    console.log("Calling Gemini API with @google/genai SDK, model: gemini-2.0-flash-lite");
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash-lite",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
